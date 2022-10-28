@@ -25,7 +25,7 @@ for i in splitText:
 
 words = set(words)
 
-file = open(input('Введите имя файла:\n'), 'w', encoding='utf-8')
+file = open(input('Введите имя файла:\n') + '.py', 'w', encoding='utf-8')
 file.write('words = {')
 
 for i in words:
