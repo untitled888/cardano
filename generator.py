@@ -24,4 +24,12 @@ for i in splitText:
         words.append(i)
 
 words = set(words)
-print(words)
+
+file = open(input('Введите имя файла:\n'), 'w', encoding='utf-8')
+file.write('words = {')
+
+for i in words:
+    file.write("'" + i + "',\n")
+
+file.write('}')
+file.close()
