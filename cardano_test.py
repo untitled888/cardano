@@ -20,6 +20,10 @@ class Test(unittest.TestCase):
         self.assertEqual(cardano.decrypt(text, key, "CW"), "собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв")
     def test_ccw(self):
         self.assertEqual(cardano.decrypt(text, key, "CCW"), "собраниеделегатопрежденаантонабволициякемтопредуврайонаотменитеп")
+    def test_plusOne(self):
+        self.assertEqual(cardano.plusOne('00000110', -1), '00000111')
+    def test_plusOne2(self):
+        self.assertEqual(cardano.plusOne('00000111', -1), '00001000')
 
 if __name__ == '__main__':
     unittest.main()
