@@ -24,6 +24,8 @@ class Test(unittest.TestCase):
         self.assertEqual(cardano.plusOne('00000110', -1), '00000111')
     def test_plusOne2(self):
         self.assertEqual(cardano.plusOne('00000111', -1), '00001000')
+    def test_hack(self):
+        self.assertEqual(cardano.hack(text, '0'*int(8**2/4*3) + '1'*int(8**2/4)), ("собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв", key))
 
 if __name__ == '__main__':
     unittest.main()
