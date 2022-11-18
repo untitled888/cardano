@@ -1,5 +1,7 @@
+import numpy as np
+
 #Ключ пока известен
-testKey = [
+testKey = np.array([
     [0, 1, 0, 1, 0, 0, 1, 0],
     [0, 0, 0, 0, 1, 0, 0, 0],
     [1, 0, 1, 0, 0, 0, 1, 0],
@@ -8,39 +10,41 @@ testKey = [
     [1, 0, 0, 0, 1, 0, 0, 0],
     [0, 0, 1, 0, 0, 0, 1, 0],
     [0, 0, 0, 1, 0, 0, 0, 1]
-]
+], int)
 
 #Тестовый словарь
 words = {'собрание', 'хлеб', 'делегат', 'полиция', 'слово', 'вход'}
 
 #Поворачиваем сетку на 90 градусов
 def rotateCW(key):
-    newKey = []
+    newKey = np.array(range(size**2), int).reshape(size, size)
     for i in range(size):
-        newKey.append([])
-    for i in range(size):
+        k = 0
         for j in range(-1, 0-(size+1), -1):
-            newKey[i].append(key[j][i])
+            newKey[i,k] = key[j][i]
+            k += 1
     return newKey
 
 def rotateCCW(key):
-    newKey = []
+    newKey = np.array(range(size**2), int).reshape(size, size)
     for i in range(size):
-        newKey.append([])
-    for i in range(size):
+        k = 0
         for j in range(size):
-            newKey[i].append(key[j][-1-i])
+            newKey[i,k] = key[j][-1-i]
+            k += 1
     return newKey
 
 #Расшифровка при знании ключа
 def decrypt(text, key, rotate):
     decrypted = ''
+    encryptedText = ''
+    for i in text:
+        encryptedText += i
     usedKey = key
     for i in range(4):
-        for i in range(size):
-            for j in range(size):
-                if usedKey[i][j]:
-                    decrypted += text[i][j]
+        for j in range(size**2):
+            if usedKey.flatten()[j] == 1:
+                decrypted += encryptedText[j]
         if rotate == "CW":
             usedKey = rotateCW(usedKey)
         elif rotate == "CCW":
@@ -61,7 +65,7 @@ def plusOne(key, index):
         return plusOne(newKey, index-1)
 
 def convert_list(key):
-    newKey = []
+    newKey = np.array(int)
     for i in range(size):
             newKey.append([])
     for i in range(size):
