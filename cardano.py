@@ -53,21 +53,18 @@ def decrypt(text, key, rotate):
 
 #Прибавление 1 к двоичному числу
 def plusOne(key, index):
-    newKey = list(key)
-    Return = ''
-    if newKey[index] == '0':
-        newKey[index] = '1'
-        for i in newKey:
-            Return += i
-        return Return
+    newKey = key.flatten()
+    if newKey[index] == 0:
+        newKey[index] = 1
+        return newKey.reshape(size, size)
     else:
-        newKey[index] = '0'
+        newKey[index] = 0
         return plusOne(newKey, index-1)
 
 def convert_list(key):
     newKey = np.array(int)
     for i in range(size):
-            newKey.append([])
+        newKey.append([])
     for i in range(size):
         for j in range(size):
             newKey[i].append(int(key[size*i + j]))
@@ -81,12 +78,24 @@ def convert_str(key):
     return newKey
 
 def hack(text, start):
+    k = 0
     key = start
-    while key != '1'*(size**2//4) + '0'*(size**2//4*3):
-        if key.count('1') != size**2//4:
+    stop = []
+    temp = []
+    for i in range(size):
+        temp.append(1)
+    stop.append(temp)
+    temp = []
+    for i in range(size):
+        temp.append(0)
+    for i in range(size-1):
+        stop.append(temp)
+    stop = np.array(stop)
+    del temp
+    while key.tolist() != stop.tolist():
+        if key.sum() != size**2//4:
             key = plusOne(key, -1)
             continue
-        key = convert_list(key)
         for attempt in range(4):
             for i in ('CW', 'CCW'):
                 decrypted = decrypt(text, key, i)
@@ -97,7 +106,10 @@ def hack(text, start):
                 if counter > 2:
                     return (decrypted, key)
             key = rotateCW(key)
-        key = plusOne(convert_str(key), -1)
+        key = plusOne(key, -1)
+        if k >= 1000:
+            return
+        k += 1
 
 if __name__ == '__main__':
     encrypted = []
@@ -112,4 +124,20 @@ if __name__ == '__main__':
             else:
                 print('Введено неверное количество символов')
 
-    print(decrypt(encrypted, testKey, 'CW'))
+    #print(decrypt(encrypted, testKey, 'CW'))
+    start = []
+    temp = []
+    for i in range(size):
+        temp.append(0)
+    for i in range(size-1):
+        start.append(temp)
+    temp = []
+    for i in range(size):
+        temp.append(1)
+    start.append(temp)
+    start = np.array(start)
+    del temp
+    from time import time
+    timer = time()
+    a = hack(encrypted, start)
+    print(time() - timer)

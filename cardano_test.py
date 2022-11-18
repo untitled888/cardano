@@ -2,6 +2,19 @@ import cardano
 import unittest
 import numpy as np
 
+start = []
+temp = []
+for i in range(8):
+    temp.append(0)
+for i in range(8-1):
+    start.append(temp)
+temp = []
+for i in range(8):
+    temp.append(1)
+start.append(temp)
+start = np.array(start)
+del temp
+
 key = np.array([
     [0, 1, 0, 1, 0, 0, 1, 0],
     [0, 0, 0, 0, 1, 0, 0, 0],
@@ -14,19 +27,23 @@ key = np.array([
 ])
 
 text = ["осволрбп", "риеарцжй", "аонидния", "аекеонет", "адмамеен", "лттнеооп", "нигратае", "пебтдвуо"]
-cardano.size = 8
 
 class Test(unittest.TestCase):
-    def test_decrypt(self):
+    def test_decrypt_cw(self):
+        cardano.size = 8
         self.assertEqual(cardano.decrypt(text, key, "CW"), "собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв")
-    def test_ccw(self):
+    def test_decrypt_ccw(self):
+        cardano.size = 8
         self.assertEqual(cardano.decrypt(text, key, "CCW"), "собраниеделегатопрежденаантонабволициякемтопредуврайонаотменитеп")
     def test_plusOne(self):
-        self.assertEqual(cardano.plusOne('00000110', -1), '00000111')
+        cardano.size = 2
+        self.assertEqual(cardano.plusOne(np.array([0,1,1,0]).reshape(2,2), -1).tolist(), np.array([0,1,1,1]).reshape(2,2).tolist())
     def test_plusOne2(self):
-        self.assertEqual(cardano.plusOne('00000111', -1), '00001000')
+        cardano.size = 2
+        self.assertEqual(cardano.plusOne(np.array([0,1,1,1]).reshape(2,2), -1).tolist(), np.array([1,0,0,0]).reshape(2,2).tolist())
     def test_hack(self):
-        self.assertEqual(cardano.hack(text, '0'*int(8**2/4*3) + '1'*int(8**2/4)), ("собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв", key))
+        cardano.size = 8
+        self.assertEqual(cardano.hack(text, start), ("собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв", key))
 
 if __name__ == '__main__':
     unittest.main()
