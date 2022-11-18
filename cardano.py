@@ -61,22 +61,6 @@ def plusOne(key, index):
         newKey[index] = 0
         return plusOne(newKey, index-1)
 
-def convert_list(key):
-    newKey = np.array(int)
-    for i in range(size):
-        newKey.append([])
-    for i in range(size):
-        for j in range(size):
-            newKey[i].append(int(key[size*i + j]))
-    return newKey
-
-def convert_str(key):
-    newKey = ''
-    for i in key:
-        for j in i:
-            newKey += str(j)
-    return newKey
-
 def hack(text, start):
     k = 0
     key = start
@@ -91,7 +75,6 @@ def hack(text, start):
     for i in range(size-1):
         stop.append(temp)
     stop = np.array(stop)
-    del temp
     while key.tolist() != stop.tolist():
         if key.sum() != size**2//4:
             key = plusOne(key, -1)
