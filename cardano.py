@@ -62,7 +62,6 @@ def plusOne(key, index):
         return plusOne(newKey, index-1)
 
 def hack(text, start):
-    k = 0
     key = start
     stop = []
     temp = []
@@ -90,9 +89,7 @@ def hack(text, start):
                     return (decrypted, key)
             key = rotateCW(key)
         key = plusOne(key, -1)
-        if k >= 1000:
-            return
-        k += 1
+        
 
 if __name__ == '__main__':
     encrypted = []
@@ -120,7 +117,4 @@ if __name__ == '__main__':
     start.append(temp)
     start = np.array(start)
     del temp
-    from time import time
-    timer = time()
     a = hack(encrypted, start)
-    print(time() - timer)
