@@ -21,7 +21,7 @@ def rotateCW(key):
     for i in range(size):
         k = 0
         for j in range(-1, 0-(size+1), -1):
-            newKey[i,k] = key[j][i]
+            newKey[i,k] = key[j,i]
             k += 1
     return newKey
 

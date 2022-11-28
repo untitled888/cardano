@@ -28,20 +28,20 @@ key = np.array([
 
 text = ["осволрбп", "риеарцжй", "аонидния", "аекеонет", "адмамеен", "лттнеооп", "нигратае", "пебтдвуо"]
 
-class Test(unittest.TestCase):
-    def test_decrypt_cw(self):
+class CardanoTest(unittest.TestCase):
+    def decryptCW(self):
         cardano.size = 8
         self.assertEqual(cardano.decrypt(text, key, "CW"), "собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв")
-    def test_decrypt_ccw(self):
+    def decryptCCW(self):
         cardano.size = 8
         self.assertEqual(cardano.decrypt(text, key, "CCW"), "собраниеделегатопрежденаантонабволициякемтопредуврайонаотменитеп")
-    def test_plusOne(self):
+    def plusOne(self):
         cardano.size = 2
         self.assertEqual(cardano.plusOne(np.array([0,1,1,0]).reshape(2,2), -1).tolist(), np.array([0,1,1,1]).reshape(2,2).tolist())
-    def test_plusOne2(self):
+    def plusOne2(self):
         cardano.size = 2
         self.assertEqual(cardano.plusOne(np.array([0,1,1,1]).reshape(2,2), -1).tolist(), np.array([1,0,0,0]).reshape(2,2).tolist())
-    def test_hack(self):
+    def hack(self):
         cardano.size = 8
         self.assertEqual(cardano.hack(text, start), ("собраниеделегатоврайонаотменитеполициякемтопредупрежденаантонабв", key))
 
