@@ -1,5 +1,4 @@
 import numpy as np
-import os
 symbols = '0123'
 
 #Функция поворота
@@ -22,34 +21,11 @@ def plusOne(mask, index):
         new[index] += 1
         return new
 
-#Создание ключа по маске
-def maskToKey(mask):
-    quaters = np.zeros(size**2, int).reshape(4, quaterSize**2)
-    for i in range(len(mask)):
-        quaters[mask[i], i] = 1
-    q1 = quaters[0].reshape(quaterSize, quaterSize)
-
-    q2 = quaters[1].reshape(quaterSize, quaterSize)
-    q2 = rotateCW(q2)
-
-    q3 = quaters[2].reshape(quaterSize, quaterSize)
-    for i in range(2):
-        q3 = rotateCW(q3)
-
-    q4 = quaters[3].reshape(quaterSize, quaterSize)
-    for i in range(3):
-        q4 = rotateCW(q4)
-    half1 = np.concatenate((q1,q2), axis=1)
-    half2 = np.concatenate((q3,q4), axis=1)
-    key = np.concatenate((half1, half2))
-    return key
-
 def maskToNumber(mask):
     number = 0
     for i in range(len(mask)):
         number += 3**i * int(mask[-1-i])
     return number
-
 
 if __name__ == '__main__':
     #Запрос данных
@@ -97,18 +73,17 @@ if __name__ == '__main__':
 
     k = maskToNumber(startStr)
     stopNumber = maskToNumber(stopStr)
-    
-    try:
-        os.mkdir(f'keys{size}')
-    except:
-        pass
-    os.chdir(f'keys{size}')
+    quantity = stopNumber - k
 
-    #Перебираем маски, создаём по ним ключи и кладём в файл
-    while k != stopNumber + 1:
-        currentKey = maskToKey(currentMask)
-        f = []
-        if not f'{k}.npy' in os.listdir():
-            np.save(f'{k}.npy', currentKey)
+    fileName = input('Введите имя файла:\n')
+    quantityFile = open(fileName + '.py', 'w')
+    quantityFile.write('quantity = ' + str(quantity))
+    quantityFile.close()
+    data = np.memmap(fileName, mode='w+', shape=(quantity, quaterSize**2))
+
+    #Перебираем маски и кладём в файл
+    for i in range(quantity):
+        data[i] = currentMask
+        data.flush()
         currentMask = plusOne(currentMask, -1)
         k += 1

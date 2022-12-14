@@ -16,7 +16,7 @@ testKey = np.array([
 words = {'собрание', 'хлеб', 'делегат', 'полиция', 'слово', 'вход'}
 
 #Поворачиваем сетку на 90 градусов
-def rotateCW(key):
+def rotateCW(key, size):
     newKey = np.array(range(size**2), int).reshape(size, size)
     for i in range(size):
         k = 0
@@ -25,7 +25,7 @@ def rotateCW(key):
             k += 1
     return newKey
 
-def rotateCCW(key):
+def rotateCCW(key, size):
     newKey = np.array(range(size**2), int).reshape(size, size)
     for i in range(size):
         k = 0
@@ -42,42 +42,41 @@ def decrypt(text, key, rotate):
         encryptedText += i
     usedKey = key
     for i in range(4):
-        for j in range(size**2):
+        for j in range(netSize**2):
             if usedKey.flatten()[j] == 1:
                 decrypted += encryptedText[j]
         if rotate == "CW":
-            usedKey = rotateCW(usedKey)
+            usedKey = rotateCW(usedKey, netSize)
         elif rotate == "CCW":
-            usedKey = rotateCCW(usedKey)
+            usedKey = rotateCCW(usedKey, netSize)
     return decrypted
 
-#Прибавление 1 к двоичному числу
-def plusOne(key, index):
-    newKey = key.flatten()
-    if newKey[index] == 0:
-        newKey[index] = 1
-        return newKey.reshape(size, size)
-    else:
-        newKey[index] = 0
-        return plusOne(newKey, index-1)
+#Создание ключа по маске
+def maskToKey(mask):
+    quaters = np.zeros(netSize**2, int).reshape(4, quaterSize**2)
+    for i in range(len(mask)):
+        quaters[mask[i], i] = 1
+    q1 = quaters[0].reshape(quaterSize, quaterSize)
 
-def hack(text, start):
-    key = start
-    stop = []
-    temp = []
-    for i in range(size):
-        temp.append(1)
-    stop.append(temp)
-    temp = []
-    for i in range(size):
-        temp.append(0)
-    for i in range(size-1):
-        stop.append(temp)
-    stop = np.array(stop)
-    while key.tolist() != stop.tolist():
-        if key.sum() != size**2//4:
-            key = plusOne(key, -1)
-            continue
+    q2 = quaters[1].reshape(quaterSize, quaterSize)
+    q2 = rotateCW(q2, quaterSize)
+
+    q3 = quaters[2].reshape(quaterSize, quaterSize)
+    for i in range(2):
+        q3 = rotateCW(q3, quaterSize)
+
+    q4 = quaters[3].reshape(quaterSize, quaterSize)
+    for i in range(3):
+        q4 = rotateCW(q4, quaterSize)
+
+    half1 = np.concatenate((q1,q2), axis=1)
+    half2 = np.concatenate((q4,q3), axis=1)
+    key = np.concatenate((half1, half2))
+    return key
+
+def hack(text):
+    for i in range(quantity):
+        key = maskToKey(masks[i])
         for attempt in range(4):
             for i in ('CW', 'CCW'):
                 decrypted = decrypt(text, key, i)
@@ -87,34 +86,27 @@ def hack(text, start):
                         counter += 1
                 if counter > 2:
                     return (decrypted, key)
-            key = rotateCW(key)
-        key = plusOne(key, -1)
+            key = rotateCW(key, netSize)
         
 
 if __name__ == '__main__':
     encrypted = []
 
-    size = int(input('Введите количество строк:\n'))
-    for i in range(size):
+    netSize = int(input('Введите количество строк:\n'))
+    quaterSize = netSize//2
+    for i in range(netSize):
         while True:
             string = input('Введите ' + str(i+1) + ' строку:\n')
-            if len(string) == size:
+            if len(string) == netSize:
                 encrypted.append(string.lower())
                 break
             else:
                 print('Введено неверное количество символов')
+    
+    maskFileName = input('Введите имя файла с масками:\n')
+    exec(f'from {maskFileName} import quantity')
+    masks = np.memmap(maskFileName, shape=(quantity, quaterSize**2))
 
     #print(decrypt(encrypted, testKey, 'CW'))
-    start = []
-    temp = []
-    for i in range(size):
-        temp.append(0)
-    for i in range(size-1):
-        start.append(temp)
-    temp = []
-    for i in range(size):
-        temp.append(1)
-    start.append(temp)
-    start = np.array(start)
-    del temp
-    a = hack(encrypted, start)
+    a = hack(encrypted)
+    print(a)
