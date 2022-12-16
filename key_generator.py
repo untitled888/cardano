@@ -71,9 +71,7 @@ if __name__ == '__main__':
     
     currentMask = start.copy()
 
-    k = maskToNumber(startStr)
-    stopNumber = maskToNumber(stopStr)
-    quantity = stopNumber - k
+    quantity = maskToNumber(stopStr) - maskToNumber(startStr)
 
     fileName = input('Введите имя файла:\n')
     quantityFile = open(fileName + '.py', 'w')
@@ -82,8 +80,11 @@ if __name__ == '__main__':
     data = np.memmap(fileName, mode='w+', shape=(quantity, quaterSize**2))
 
     #Перебираем маски и кладём в файл
+    from time import time
+    startTime = time()
     for i in range(quantity):
         data[i] = currentMask
         data.flush()
         currentMask = plusOne(currentMask, -1)
-        k += 1
+    print(quantity)
+    print(time() - startTime)
